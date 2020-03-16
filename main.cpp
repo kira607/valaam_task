@@ -1,37 +1,74 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <cassert>
 
-bool test_mode = true;
-
-int main()
+namespace colors
 {
-    std::string file_in_path = "./in.f", file_out_path = "./out.f";
-    /*
-    std::cout << "Name of in file:";
-    std::cin >> file_in_path;
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
-    */
+    char red[] = "\033[31m";
+    char blue[] = "\033[34m";
+    char none[] = "\033[0m";
+}
+
+bool test_mode = false;
+
+//requires minimum 3 arguments
+//maximum 4
+int main(int argc, char *argv[])
+{
+    if(argc > 4 || argc < 3)
+    {
+        std::cout << colors::red << "Got " << argc << " arguments, but 3 or 4 needed" <<
+        std::endl << "Terminating" << colors::none << std::endl;
+        return 1;
+    }
+    std::string file_in_path = argv[1], file_out_path = argv[2];
+
+    if(file_in_path == file_out_path)
+    {
+        std::cout << colors::red << "AAAA Fuck!" << colors::none << std::endl;
+        file_out_path = "out.f";
+        std::cout << "FILE OUT: " << file_out_path << std::endl;
+    }
 
     std::ifstream fin(file_in_path,std::ios::binary);
     std::ofstream fout(file_out_path,std::ios::binary);
 
     fin.seekg(0,std::ios::end);
-    int size = fin.tellg();
+    int file_size = fin.tellg();
     fin.seekg(0,std::ios::beg);
 
-    if(test_mode)
+    std::cout << "size of in file: " << file_size << " byte" << std::endl;
+
+    int unit_size;
+    try
     {
-        std::cout << "size of in file: " << size << " byte" << std::endl;
+        std::stringstream convert(
+                argv[3]); // создаём переменную stringstream с именем convert, инициализируя её значением argv[1]
+        if (!(convert >> unit_size)) // выполняем конвертацию
+        {
+            std::cout << colors::red << "Bad unit size. Setting default... (1MB)" << colors::none << std::endl;
+            unit_size = 1024 * 1024; // если конвертация терпит неудачу, то задаём myint значение по умолчанию
+        }
+        else
+        {
+            std::cout << "Unit size: " << unit_size << " byte" << std::endl;
+        }
+    }
+    catch(const std::logic_error &)
+    {
+        std::cout << colors::blue << "Did not receive unit size. Setting default... (1MB)" << colors::none << std::endl;
+        unit_size = 1024*1024;
     }
 
-    int unit_size{100};
     char unit[unit_size];
 
     int j = 1,
-    unit_num = size / unit_size;
-    if(size % unit_size > 0) ++ unit_num;
+    unit_num = file_size / unit_size;
+    if(file_size % unit_size > 0) ++ unit_num;
+
+    std::cout << "Units number: " << colors::blue << unit_num << colors::none << std::endl;
 
     while(unit_num > 0)
     {
@@ -69,7 +106,7 @@ int main()
     {
         std::cout << "\n\n\n";
         std::cout << "----------------out.f-----------------" << std::endl;
-        system("cat out.f");
+        system("cat file2.txt");
     }
 
     return 0;
