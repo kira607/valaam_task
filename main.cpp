@@ -6,34 +6,34 @@
 #include <functional> //hash
 #include <utility>
 
-/*
-enum class colors
+
+enum class color
 {
     red,
     blue,
     none,
 };
 
-std::ostream& operator<< (std::ostream &out, colors col)
+std::ostream& operator<< (std::ostream &out, color col)
 {
     switch(col)
     {
-        case colors::red  :  out << "\033[31m";
-        case colors::blue :  out << "\033[34m";
-        case colors::none :  out << "\033[0m";
-        default          :  out.setstate(std::ios_base::failbit);
+        case color::red  :  out << "\033[31m"; break;
+        case color::blue :  out << "\033[34m"; break;
+        case color::none :  out << "\033[0m" ; break;
+        default           :  out.setstate(std::ios_base::failbit); break;
     }
     return out;
 }
- */
 
+/*
 namespace color
 {
     char  red []= "\033[31m";
     char  blue[] = "\033[34m";
     char  none[] = "\033[0m";
 }
-
+*/
 constexpr bool test_mode = false;
 
 class Unit
