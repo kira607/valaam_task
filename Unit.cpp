@@ -59,7 +59,7 @@ Unit::Unit(char *unit_size_str):unit_hash{0}
 
 Unit::~Unit()
 {
-    if(test_mode) printf("Destructor INT\n");
+    if(test_mode) printf("Destructor\n");
 }
 
 [[nodiscard]] int Unit::size() const
@@ -94,12 +94,12 @@ void Unit::resize(int to_resize)
 }
 void Unit::fill()
 {
-    if(test_mode) printf("Fill\n");
+    if(test_mode) printf("FILL\n");
     //!check unit, size
     try
     {
         if (!unit.empty())
-            for (int k = unit.size(); k < unit_size; ++k)
+            for (int k = 0/*unit.size()*/; k < unit_size; ++k)
                 unit.at(k) = '\0';
     }
     catch(const std::exception& ex)
@@ -116,14 +116,14 @@ void Unit::gen()
         unit_hash = hash_gen(unit);
 }
 
-void Unit::read(std::ifstream &file)
+size_t Unit::read(std::ifstream &file)
 {
-    if(test_mode) printf("read\n");
+    if(test_mode) printf("READ\n");
     //!check size & file
     try
     {
         if(!unit.empty()&&unit_size>0)
-            file.read((char*)&unit[0], sizeof(char) * unit_size); //! returns num of read bits!!!???
+            return file.readsome((char*)&unit[0], sizeof(char) * unit_size); //! returns num of read bits!!!???
         else throw std::exception();
     }
     catch(const std::exception &ex)

@@ -37,7 +37,7 @@ public:
     void resize(int to_resize);
     void fill();
     void gen();
-    void read(std::ifstream &file);
+    size_t read(std::ifstream &file);
     void write(std::ofstream &file);
     void disp();
     void info();
