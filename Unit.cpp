@@ -21,14 +21,10 @@ void Unit::init(unsigned int unit_size_in)
     }
 }
 
-Unit::Unit(int unit_size_in):unit_size{unit_size_in},unit_hash{0}
+//converts str to int and sets unit_size
+void Unit::convert(char *unit_size_str)
 {
-    Unit::init(unit_size_in);
-}
-
-Unit::Unit(char *unit_size_str):unit_hash{0}
-{
-    if(test_mode) printf("Constructor CHAR*, size:%s\n",unit_size_str);
+    if(test_mode) printf("CONVERTER, size:%s\n",unit_size_str);
     try
     {
         std::stringstream convert(unit_size_str);
@@ -54,6 +50,16 @@ Unit::Unit(char *unit_size_str):unit_hash{0}
 
         unit_size = 1024*1024;
     }
+}
+
+Unit::Unit(int unit_size_in):unit_size{unit_size_in},unit_hash{0}
+{
+    Unit::init(unit_size_in);
+}
+
+Unit::Unit(char *unit_size_str):unit_size{0},unit_hash{0}
+{
+    Unit::convert(unit_size_str);
     Unit::init(unit_size);
 }
 
@@ -141,7 +147,8 @@ void Unit::write(std::ofstream &file)
         if(!unit.empty()&&unit_size>0)
         {
             file.write((char *) &unit[0], sizeof(char) * unit_size);
-            file << unit_hash;
+            if(unit_hash)
+                file << unit_hash;
         }
         else throw std::exception();
     }
@@ -157,6 +164,13 @@ void Unit::disp()
     std::cout << unit << "\n";
 }
 
+std::ostream& operator<<(std::ostream& out, const Unit& unit)
+{
+    out << unit;
+    return out;
+}
+
+///do I need this method?
 void Unit::info()
 {
     std::cout << color::blue << "INFO:\n" << color::none;
@@ -165,4 +179,3 @@ void Unit::info()
     std::cout << "Unit size is " << unit_size << "\n";
     std::cout << color::blue << "------------\n" << color::none;
 }
-

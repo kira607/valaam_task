@@ -23,8 +23,10 @@ private:
     int unit_size;
     std::hash<std::basic_string<char>> hash_gen;
     size_t unit_hash;
+    static constexpr int default_unit_size = 1024*1024;
 
     void init(unsigned int unit_size_in);
+    void convert(char *unit_size_str);
 public:
     explicit Unit(int unit_size_in = 0);
     explicit Unit(char *unit_size_str);
