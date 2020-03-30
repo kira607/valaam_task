@@ -8,6 +8,7 @@
 #include "Unit.h"
 #include "Producer.h"
 #include "HashGen.h"
+#include "FixedQueue.h"
 
 inline std::string intToString(int _int)
 {
@@ -52,6 +53,17 @@ int main(int argc, char *argv[])
     int unit_size;
     constexpr int default_unit_size = 1024*1024;
 
+    {
+        std::queue<int> q;
+        std::cout << q.size() << "\n";
+        q.pop();
+        std::cout << q.size() << "\n";
+        q.pop();
+        std::cout << q.size() << "\n";
+        std::cout << typeid(q.size()).name() << "\n";
+    }
+
+
     try
     {
         unit_size = setUnitSize(argc,argv);
@@ -81,10 +93,8 @@ int main(int argc, char *argv[])
         return -150;
     }
 
-    Unit unit;
-    std::cout << unit << "\n";
+    FixedQueue<Unit> buff1, buff2;
 
-    std::vector<Unit> buff1, buff2;
     constexpr unsigned int buffer_size = 10;
     Producer producer(buff1,fin);
     HashGen hashGen(buff1,buff2);

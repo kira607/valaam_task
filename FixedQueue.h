@@ -12,18 +12,49 @@ template <class T>
 class FixedQueue
 {
 private:
-    static constexpr int size = 10;
+    static constexpr int fixed_size = 10;
     std::queue<T> queue;
 public:
     FixedQueue() = default;
     ~FixedQueue() = default;
-    void push(T _to_push);
+    bool push(T _to_push);
     void pop();
-    T front() const;
-    T bach() const;
+    T& front();
+    T& back();
+    [[nodiscard]] int size() const;
 };
 
+template<class T>
+bool FixedQueue<T>::push(T _to_push)
+{
+    if(queue.size() < fixed_size)
+        queue.push(_to_push);
+}
 
+template<class T>
+void FixedQueue<T>::pop()
+{
+    if(queue.size() > 1)
+        queue.pop();
+}
+
+template<class T>
+T& FixedQueue<T>::front()
+{
+    return queue.front();
+}
+
+template<class T>
+T& FixedQueue<T>::back()
+{
+    return queue.back();
+}
+
+template<class T>
+int FixedQueue<T>::size() const
+{
+    return queue.size();
+}
 
 
 #endif //UNTITLED_FIXEDQUEUE_H
