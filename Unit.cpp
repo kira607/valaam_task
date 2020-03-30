@@ -21,46 +21,9 @@ void Unit::init(unsigned int unit_size_in)
     }
 }
 
-//converts str to int and sets unit_size
-void Unit::convert(char *unit_size_str)
-{
-    if(test_mode) printf("CONVERTER, size:%s\n",unit_size_str);
-    try
-    {
-        std::stringstream convert(unit_size_str);
-        if (!(convert >> unit_size))
-        {
-            std::cout << color::red << "Bad unit size. Setting default... (1MB)\n" << color::none;
-            unit_size = 1024*1024;
-        }
-        else
-        {
-            if(test_mode) printf("Convert succeed!\n");
-            if(unit_size <= 0)
-                throw std::exception();
-            //std::cout << "Unit size: " << unit_size << " byte\n";
-        }
-    }
-    catch(const std::exception &ex)
-    {
-        if(strcmp(ex.what(),"") == 0)
-            std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)\n" << color::none;
-        else
-            std::cout << color::red << "Bad unit size. Setting default... (1MB)\n" << color::none;
-
-        unit_size = 1024*1024;
-    }
-}
-
 Unit::Unit(int unit_size_in):unit_size{unit_size_in},unit_hash{0}
 {
     Unit::init(unit_size_in);
-}
-
-Unit::Unit(char *unit_size_str):unit_size{0},unit_hash{0}
-{
-    Unit::convert(unit_size_str);
-    Unit::init(unit_size);
 }
 
 Unit::~Unit()

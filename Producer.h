@@ -11,10 +11,10 @@ class Producer
 {
 private:
     Unit unit;
-    std::vector<Unit> &buffer;
-    std::ifstream &fin;
+    //std::vector<Unit> *buffer;
+    //std::ifstream fin;
 public:
-    Producer(std::vector<Unit> &_buffer, std::ifstream &_fin):;
+    Producer(std::vector<Unit> &_buffer, std::ifstream &_fin);
 };
 
 

@@ -4,9 +4,9 @@
 
 #include "Producer.h"
 
-Producer::Producer(std::vector<Unit> &buffer, std::ifstream &fin)
+Producer::Producer(std::vector<Unit> &_buffer, std::ifstream &_fin)
 {
     unit.fill();
-    unit.read(fin);
-    buffer.push_back(unit);
+    unit.read(_fin);
+    _buffer.push_back(unit);
 }

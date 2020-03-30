@@ -9,20 +9,61 @@
 #include "Producer.h"
 #include "HashGen.h"
 
+inline std::string intToString(int _int)
+{
+    std::string msg = reinterpret_cast<const char *>(_int);
+    return msg;
+}
+
+int setUnitSize(int argc, char* argv[])
+{
+    //check num of args
+    if(argc > 4 || argc < 3)
+    {
+        std::string msg = "Got ";
+        msg+=intToString(argc);
+        msg+=" arguments, but 3 or 4 needed\nTerminating...";
+        throw std::runtime_error(msg);
+    }
+    else if(argc != 4)
+    {
+        throw std::runtime_error("Did not receive unit size. Setting default... (1MB)");
+    }
+
+    //convert unit size to int
+    int unit_size;
+    std::stringstream convert(argv[4]);
+    if (!(convert >> unit_size))
+    {
+        throw std::runtime_error("Bad unit size. Setting default... (1MB)");
+    }
+    if(unit_size <= 0)
+    {
+        throw std::runtime_error("Bad unit size. Setting default... (1MB)");
+    }
+
+    return unit_size;
+}
+
 //requires minimum 3 arguments
 //maximum 4
 int main(int argc, char *argv[])
 {
+    int unit_size;
+    constexpr int default_unit_size = 1024*1024;
+
+    try
+    {
+        unit_size = setUnitSize(argc,argv);
+    }
+    catch(std::exception &exception)
+    {
+        std::cout << color::red << exception.what() << color::none << '\n';
+        unit_size = default_unit_size;
+    }
+
     const unsigned char thread_num = std::thread::hardware_concurrency();
     std::cout << "I have " << (short)thread_num << " threads for you\n";
-    //check num of args
-    if(argc > 4 || argc < 3)
-    {
-        std::cout << color::red <<
-                  "Got " << argc << " arguments, but 3 or 4 needed\nTerminating..." <<
-                  color::none << "\n";
-        return 1;
-    }
 
     std::string file_in_path = argv[1], file_out_path = argv[2];
 
