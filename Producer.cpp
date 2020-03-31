@@ -13,6 +13,7 @@ Producer::Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string&
 
 void Producer::run()
 {
+    unit.refill();
     if(unit.read(fin))
     {
         //lock this operation

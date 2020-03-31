@@ -22,6 +22,7 @@ public:
     T& front();
     T& back();
     [[nodiscard]] int size() const;
+    [[nodiscard]] int fixedSize() const;
 };
 
 template<class T>
@@ -54,6 +55,12 @@ template<class T>
 int FixedQueue<T>::size() const
 {
     return queue.size();
+}
+
+template<class T>
+int FixedQueue<T>::fixedSize() const
+{
+    return fixed_size;
 }
 
 
