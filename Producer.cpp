@@ -4,9 +4,24 @@
 
 #include "Producer.h"
 
-Producer::Producer(std::vector<Unit> &_buffer, std::ifstream &_fin)
+
+Producer::Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string& name_of_file, int _unit_size)
+:buffer{std::move(_buffer)},fin(name_of_file),unit(_unit_size)
 {
-    unit.fill();
-    unit.read(_fin);
-    _buffer.push_back(unit);
+
+}
+
+void Producer::run()
+{
+    if(unit.read(fin))
+    {
+        //lock this operation
+        std::lock_guard<std::mutex> lg(mut);
+        buffer->push(unit);
+    }
+    else
+    {
+        //say that producer will no longer provide units
+        std::cout << "Producer:: I'm dead now, no units left\n";
+    }
 }

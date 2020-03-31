@@ -5,16 +5,24 @@
 #ifndef UNTITLED_PRODUCER_H
 #define UNTITLED_PRODUCER_H
 
+#include <memory>
+#include <utility>
+#include <mutex>
+#include <utility>
+
 #include "Unit.h"
+#include "FixedQueue.h"
 
 class Producer
 {
 private:
     Unit unit;
-    //std::vector<Unit> *buffer;
-    //std::ifstream fin;
+    std::shared_ptr<FixedQueue<Unit>> buffer;
+    std::ifstream fin;
+    mutable std::mutex mut;
 public:
-    Producer(std::vector<Unit> &_buffer, std::ifstream &_fin);
+    explicit Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string& _name_of_file, int _unit_size);
+    void run();
 };
 
 

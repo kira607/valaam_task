@@ -23,8 +23,6 @@ private:
     int unit_size;
     std::hash<std::basic_string<char>> hash_gen;
     size_t unit_hash;
-
-    void init(unsigned int unit_size_in);
 public:
     explicit Unit(int unit_size_in = 0);
     ~Unit();
@@ -33,13 +31,11 @@ public:
     [[nodiscard]] size_t hash() const;
     [[nodiscard]] std::basic_string<char> data() const;
 
-    void resize(int to_resize);
-    void fill();
+    void refill();
     void gen();
     size_t read(std::ifstream &file);
     void write(std::ofstream &file);
     void disp();
-    void info();
     friend std::ostream& operator<<(std::ostream& out, const Unit& unit);
 };
 

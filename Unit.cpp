@@ -4,26 +4,12 @@
 
 #include "Unit.h"
 
-void Unit::init(unsigned int unit_size_in)
-{
-    if(test_mode) printf("INIT, %d\n",unit_size_in);
-    try
-    {
-        if(unit_size_in>0)
-            unit.resize(unit_size_in,0);
-        else throw std::exception(); //! set def unit size
-    }
-    catch(const std::exception &ex) // catch std::bad_alloc
-    {
-        std::cout << color::red << "Error: " << ex.what() << color::none << "\n";
-        unit_size = 1024*1024;
-        unit.resize(unit_size,0);
-    }
-}
-
 Unit::Unit(int unit_size_in):unit_size{unit_size_in},unit_hash{0}
 {
-    Unit::init(unit_size_in);
+    if(test_mode)
+        std::cout << "CONSTRUCTOR, " << unit_size_in << "\n";
+
+    unit.resize(unit_size_in, 0);
 }
 
 Unit::~Unit()
@@ -45,37 +31,11 @@ Unit::~Unit()
     return unit;
 }
 
-void Unit::resize(int to_resize)
+void Unit::refill()
 {
-    try
-    {
-        if(unit.empty()||to_resize>0)
-            unit.resize(to_resize);
-        else throw std::exception();
-    }
-    catch(const std::exception &ex) // catch std::bad_alloc
-    {
-        if(strcmp(ex.what(),"") == 0)
-            std::cout << color::blue << "Error: bad resize" << color::none;
-        else
-            std::cout << color::red << "Error: " << ex.what() << color::none << "\n";
-    }
+    unit.resize(unit_size);
 }
-void Unit::fill()
-{
-    if(test_mode) printf("FILL\n");
-    //!check unit, size
-    try
-    {
-        if (!unit.empty())
-            for (int k = 0/*unit.size()*/; k < unit_size; ++k)
-                unit.at(k) = '\0';
-    }
-    catch(const std::exception& ex)
-    {
-        std::cout << "Error: " << ex.what() << "\n";
-    }
-}
+
 void Unit::gen()
 {
     if(test_mode) printf("GEN\n");
@@ -92,7 +52,7 @@ size_t Unit::read(std::ifstream &file)
     try
     {
         if(!unit.empty()&&unit_size>0)
-            return file.readsome((char*)&unit[0], sizeof(char) * unit_size); //! returns num of read bits!!!???
+            return file.readsome((char*)&unit[0], sizeof(char) * unit_size); //! returns num of read bits
         else throw std::exception();
     }
     catch(const std::exception &ex)
@@ -131,14 +91,4 @@ std::ostream& operator<<(std::ostream& out, const Unit& unit)
 {
     out << unit;
     return out;
-}
-
-///do I need this method?
-void Unit::info()
-{
-    std::cout << color::blue << "INFO:\n" << color::none;
-    if(unit.empty()) printf("no data\n");
-    else             printf("has data\n");
-    std::cout << "Unit size is " << unit_size << "\n";
-    std::cout << color::blue << "------------\n" << color::none;
 }
