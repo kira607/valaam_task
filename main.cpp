@@ -10,41 +10,12 @@
 #include "HashGen.h"
 #include "FixedQueue.h"
 
-inline std::string intToString(int _int)
+enum error_code
 {
-    std::string msg = reinterpret_cast<const char *>(_int);
-    return msg;
-}
-
-int setUnitSize(int argc, char* argv[])
-{
-    //check num of args
-    if(argc > 4 || argc < 3)
-    {
-        std::string msg = "Got ";
-        msg+=intToString(argc);
-        msg+=" arguments, but 3 or 4 needed\nTerminating...";
-        throw std::runtime_error(msg);
-    }
-    else if(argc != 4)
-    {
-        throw std::runtime_error("Did not receive unit size. Setting default... (1MB)");
-    }
-
-    //convert unit size to int
-    int unit_size;
-    std::stringstream convert(argv[4]);
-    if (!(convert >> unit_size))
-    {
-        throw std::runtime_error("Bad unit size. Setting default... (1MB)");
-    }
-    if(unit_size <= 0)
-    {
-        throw std::runtime_error("Bad unit size. Setting default... (1MB)");
-    }
-
-    return unit_size;
-}
+    NOT_ENOUGH_ARGUMENTS,
+    FILE_IN_NOT_EXISTS,
+    FILE_OUT_NOT_EXISTS,
+};
 
 //requires minimum 3 arguments
 //maximum 4
@@ -53,58 +24,79 @@ int main(int argc, char *argv[])
     int unit_size;
     constexpr int default_unit_size = 1024*1024;
 
+    //check args
+    if(argc > 4 || argc < 3)
     {
-        std::queue<int> q;
-        std::cout << q.size() << "\n";
-        q.pop();
-        std::cout << q.size() << "\n";
-        q.pop();
-        std::cout << q.size() << "\n";
-        std::cout << typeid(q.size()).name() << "\n";
+        std::cout << color::red << "Got " << argc <<
+        " arguments, but 3 or 4 needed\nTerminating..." <<
+        color::none;
+        return NOT_ENOUGH_ARGUMENTS;
     }
-
-
-    try
+    else if(argc != 4) // same as argc == 3
     {
-        unit_size = setUnitSize(argc,argv);
-    }
-    catch(std::exception &exception)
-    {
-        std::cout << color::red << exception.what() << color::none << '\n';
+        std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
         unit_size = default_unit_size;
     }
+    else //convert unit size to int
+    {
+        std::stringstream convert(argv[3]);
+        if (!(convert >> unit_size))
+        {
+            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+            unit_size = default_unit_size;
+        }
+        if(unit_size <= 0)
+        {
+            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+            unit_size = default_unit_size;
+        }
 
-    const unsigned char thread_num = std::thread::hardware_concurrency();
-    std::cout << "I have " << (short)thread_num << " threads for you\n";
+    }
 
     std::string file_in_path = argv[1], file_out_path = argv[2];
 
-    std::ifstream fin(file_in_path);
-    std::ofstream fout(file_out_path);
-
-    if(!fin.is_open())
+    //check files
+    if(!std::ifstream(file_in_path).is_open())
     {
-        std::cout << color::red << "Error: could not open " << file_in_path << color::none << "\n";
-        return -100;
+        std::cout << color::red << "Error: could not open " << color::blue << file_in_path << color::red << "\nTerminating\n" << color::none;
+        return FILE_IN_NOT_EXISTS;
     }
-    if(!fout.is_open())
+    if(!std::ofstream(file_out_path).is_open())
     {
-        std::cout << color::red << "Error: could not open " << file_out_path << color::none << "\n";
-        return -150;
+        std::cout << color::red << "Error: could not open " << color::blue << file_out_path << color::red << "\nTerminating\n" << color::none;
+        return FILE_OUT_NOT_EXISTS;
     }
 
-    FixedQueue<Unit> buff1, buff2;
+    //////////////////////////////////////
+    /// HERE WILL BE ARGUMENTS MANAGER ///
+    //////////////////////////////////////
 
-    constexpr unsigned int buffer_size = 10;
-    Producer producer(buff1,fin);
+    ///DO I NEED THIS MESSAGE? PROBABLY NO...
+    const unsigned char thread_num = std::thread::hardware_concurrency();
+    std::cout << "This computer has " << color::blue << (short)thread_num << color::none << " threads\n";
+
+    std::shared_ptr<FixedQueue<Unit>> buff1_ptr(new FixedQueue<Unit>);
+    std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
+
+    Producer producer(buff1_ptr, file_in_path, unit_size);
+
+
+
+
+
+
+
+
+
+/*
     HashGen hashGen(buff1,buff2);
     Consumer consumer(buff2,fout);
 
-    /*
+
     fin.seekg(0, std::ios::end);
     size_t file_in_size = fin.tellg();
     fin.seekg(0, std::ios::beg);
-     */
+
 
     //Unit unit(argv[3]);
 
@@ -161,6 +153,8 @@ int main(int argc, char *argv[])
     //    system(to_cat.c_str());
     //}
     //
+
+*/
 
     return 0;
 }
