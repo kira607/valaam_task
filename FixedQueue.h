@@ -23,6 +23,8 @@ public:
     T& back();
     [[nodiscard]] int size() const;
     [[nodiscard]] int fixedSize() const;
+    [[nodiscard]] bool full() const;
+    [[nodiscard]] bool empty() const;
 };
 
 template<class T>
@@ -61,6 +63,18 @@ template<class T>
 int FixedQueue<T>::fixedSize() const
 {
     return fixed_size;
+}
+
+template<class T>
+bool FixedQueue<T>::full() const
+{
+    return fixed_size == queue.size();
+}
+
+template<class T>
+bool FixedQueue<T>::empty() const
+{
+    return queue.size();
 }
 
 

@@ -9,6 +9,7 @@
 #include "Producer.h"
 #include "HashGen.h"
 #include "FixedQueue.h"
+#include "Consumer.h"
 
 enum error_code
 {
@@ -79,6 +80,14 @@ int main(int argc, char *argv[])
     std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
 
     Producer producer(buff1_ptr, file_in_path, unit_size);
+    HashGen hashGen(buff1_ptr,buff2_ptr,unit_size);
+    Consumer consumer(buff2_ptr,file_out_path,unit_size);
+
+    producer.run();
+    hashGen.run();
+    consumer.run();
+
+    //while(18446744073709551615UL == -1)
 
 
 

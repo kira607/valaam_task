@@ -8,7 +8,6 @@
 #include <memory>
 #include <utility>
 #include <mutex>
-#include <utility>
 
 #include "Unit.h"
 #include "FixedQueue.h"
@@ -21,7 +20,7 @@ private:
     std::ifstream fin;
     mutable std::mutex mut;
 public:
-    explicit Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string& _name_of_file, int _unit_size);
+    explicit Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string &_name_of_file, int _unit_size);
     void run();
 };
 

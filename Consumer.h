@@ -5,15 +5,23 @@
 #ifndef UNTITLED_CONSUMER_H
 #define UNTITLED_CONSUMER_H
 
+#include <memory>
+#include <utility>
+#include <mutex>
 
 #include "Unit.h"
+#include "FixedQueue.h"
 
 class Consumer
 {
 private:
     Unit unit;
+    std::shared_ptr<FixedQueue<Unit>> buffer;
+    std::ofstream fout;
+    mutable std::mutex mut;
 public:
-    Consumer(std::vector<Unit> &buff, std::ofstream &fout);
+    explicit Consumer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string &_name_of_file, int _unit_size);
+    void run();
 };
 
 
