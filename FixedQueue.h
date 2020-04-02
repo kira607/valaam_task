@@ -21,12 +21,10 @@ private:
 public:
     FixedQueue() = default;
     ~FixedQueue() = default;
+
     void push(T _to_push);
     T pop();
-    T& front();
-    T& back();
-    [[nodiscard]] int size() const;
-    [[nodiscard]] int fixedSize() const;
+
     [[nodiscard]] bool full() const;
     [[nodiscard]] bool empty() const;
 };
@@ -45,33 +43,9 @@ T FixedQueue<T>::pop()
 {
     std::unique_lock<std::mutex> ul(mut);
     cv.wait(ul,[&]{return !this->empty();});
-    T tmp = front();
+    T tmp = queue.front();
     queue.pop();
     return tmp;
-}
-
-template<class T>
-T& FixedQueue<T>::front()
-{
-    return queue.front();
-}
-
-template<class T>
-T& FixedQueue<T>::back()
-{
-    return queue.back();
-}
-
-template<class T>
-int FixedQueue<T>::size() const
-{
-    return queue.size();
-}
-
-template<class T>
-int FixedQueue<T>::fixedSize() const
-{
-    return fixed_size;
 }
 
 template<class T>

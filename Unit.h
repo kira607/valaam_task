@@ -27,15 +27,12 @@ public:
     explicit Unit(int unit_size_in = 0);
     ~Unit();
 
-    [[nodiscard]] int size() const;
-    [[nodiscard]] size_t hash() const;
-    [[nodiscard]] std::basic_string<char> data() const;
-
     void refill();
     void gen();
+
     size_t read(std::ifstream &file);
     void write(std::ofstream &file);
-    void disp();
+
     friend std::ostream& operator<<(std::ostream& out, const Unit& unit);
 };
 

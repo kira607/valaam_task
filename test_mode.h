@@ -5,6 +5,6 @@
 #ifndef UNTITLED_TEST_MODE_H
 #define UNTITLED_TEST_MODE_H
 
-constexpr static bool test_mode = true;
+constexpr static bool test_mode = false;
 
 #endif //UNTITLED_TEST_MODE_H

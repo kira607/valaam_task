@@ -11,7 +11,6 @@
 
 #include "Unit.h"
 #include "FixedQueue.h"
-#include "condit_vars.h"
 
 class HashGen
 {

@@ -8,10 +8,10 @@
 #include <memory>
 #include <utility>
 #include <mutex>
+#include <iostream>
 
 #include "Unit.h"
 #include "FixedQueue.h"
-#include "condit_vars.h"
 
 class Producer
 {
@@ -20,10 +20,9 @@ private:
     std::shared_ptr<FixedQueue<Unit>> buffer;
     std::ifstream fin;
     mutable std::mutex mut;
+    int unit_read;
 public:
     explicit Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string &_name_of_file, int _unit_size);
-    void run();
+    bool run();
 };
-
-
 #endif //UNTITLED_PRODUCER_H
