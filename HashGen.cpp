@@ -12,24 +12,9 @@ HashGen::HashGen(std::shared_ptr<FixedQueue<Unit>> _buff1, std::shared_ptr<Fixed
 
 void HashGen::run()
 {
-    ///if producer dead also die
-
-    if(!buff1->empty())
-    {
-        std::unique_lock<std::mutex> ul(mut);
-        unit = buff1->front();
-        buff1->pop();
-    }
-
+    unit = buff1->pop();
     unit.gen();
-
-    if(!buff2->full())
-    {
-        std::unique_lock<std::mutex> ul(mut);
-        buff2->push(unit);
-    }
-
-
+    buff2->push(unit);
 }
 
 

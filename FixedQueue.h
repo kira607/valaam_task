@@ -6,6 +6,8 @@
 #define UNTITLED_FIXEDQUEUE_H
 
 #include <queue>
+#include <condition_variable>
+
 #include "Unit.h"
 
 template <class T>
@@ -14,11 +16,13 @@ class FixedQueue
 private:
     static constexpr int fixed_size = 10;
     std::queue<T> queue;
+    std::mutex mut;
+    std::condition_variable cv;
 public:
     FixedQueue() = default;
     ~FixedQueue() = default;
-    bool push(T _to_push);
-    void pop();
+    void push(T _to_push);
+    T pop();
     T& front();
     T& back();
     [[nodiscard]] int size() const;
@@ -28,17 +32,22 @@ public:
 };
 
 template<class T>
-bool FixedQueue<T>::push(T _to_push)
+void FixedQueue<T>::push(T _to_push)
 {
-    if(queue.size() < fixed_size)
-        queue.push(_to_push);
+    std::unique_lock<std::mutex> ul(mut);
+    cv.wait(ul,[&]{return !this->full();});
+    queue.push(_to_push);
+    cv.notify_one();
 }
 
 template<class T>
-void FixedQueue<T>::pop()
+T FixedQueue<T>::pop()
 {
-    if(queue.size() > 1)
-        queue.pop();
+    std::unique_lock<std::mutex> ul(mut);
+    cv.wait(ul,[&]{return !this->empty();});
+    T tmp = front();
+    queue.pop();
+    return tmp;
 }
 
 template<class T>
@@ -74,7 +83,7 @@ bool FixedQueue<T>::full() const
 template<class T>
 bool FixedQueue<T>::empty() const
 {
-    return queue.size();
+    return queue.size() == 0;
 }
 
 

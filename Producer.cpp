@@ -16,8 +16,6 @@ void Producer::run()
     unit.refill();
     if(unit.read(fin))
     {
-        //lock this operation
-        std::lock_guard<std::mutex> lg(mut);
         buffer->push(unit);
     }
     else
