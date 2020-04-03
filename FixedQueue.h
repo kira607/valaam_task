@@ -45,6 +45,7 @@ T FixedQueue<T>::pop()
     cv.wait(ul,[&]{return !this->empty();});
     T tmp = queue.front();
     queue.pop();
+    cv.notify_one();
     return tmp;
 }
 
