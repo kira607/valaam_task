@@ -28,4 +28,9 @@ bool Producer::run()
         if(test_mode) std::cout << "Producer:: I'm dead now, no units left\nI read " << unit_read << " units\n";
         return false;
     }
+
+    while(true)
+    {
+        unit.refill();
+    }
 }

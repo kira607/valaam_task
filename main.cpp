@@ -89,12 +89,20 @@ int main(int argc, char *argv[])
     HashGen hashGen(buff1_ptr,buff2_ptr,unit_size);
     Consumer consumer(buff2_ptr,file_out_path,unit_size);
 
+    std::thread producer_thread(&Producer::run,&producer);
+    std::thread hash_gen_thread(&HashGen::run,&hashGen);
+    std::thread consumer_thread(&Consumer::run,&consumer);
+    producer_thread.join();
+    hash_gen_thread.join();
+    consumer_thread.join();
 
+    /*
     while(producer.run())
     {
         hashGen.run();
         consumer.run();
     }
+     */
 
     //auto end = std::chrono::high_resolution_clock::now();
     //std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
