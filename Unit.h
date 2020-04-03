@@ -21,15 +21,14 @@ class Unit
 private:
     std::basic_string<char> unit;
     int unit_size;
-    std::hash<std::basic_string<char>> hash_gen;
     size_t unit_hash;
 public:
     explicit Unit(int unit_size_in = 0);
     ~Unit();
 
     void refill();
-    void gen();
-
+    void setHash(size_t _hash);
+    std::basic_string<char> data();
     size_t read(std::ifstream &file);
     void write(std::ofstream &file);
 

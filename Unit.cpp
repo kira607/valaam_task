@@ -26,12 +26,10 @@ void Unit::refill()
     }
 }
 
-void Unit::gen()
+void Unit::setHash(size_t _hash)
 {
     if(test_mode) printf("GEN\n");
-
-    if(!unit.empty())
-        unit_hash = hash_gen(unit);
+    unit_hash = _hash;
 }
 
 size_t Unit::read(std::ifstream &file)
@@ -74,4 +72,9 @@ std::ostream& operator<<(std::ostream& out, const Unit& unit)
 {
     out << unit.unit;
     return out;
+}
+
+std::basic_string<char> Unit::data()
+{
+    return std::basic_string<char>(unit);
 }

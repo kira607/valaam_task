@@ -13,8 +13,11 @@ HashGen::HashGen(std::shared_ptr<FixedQueue<Unit>> _buff1, std::shared_ptr<Fixed
 void HashGen::run()
 {
     unit = buff1->pop();
-    unit.gen();
+    unit.setHash(gen_hash(unit));
     buff2->push(unit);
 }
 
-
+size_t HashGen::gen_hash(Unit &_unit)
+{
+    return hash_gen(_unit.data());
+}
