@@ -24,6 +24,6 @@ private:
     bool is_dead;
 public:
     explicit Producer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string &_name_of_file, int _unit_size);
-    bool run();
+    void run();
 };
 #endif //UNTITLED_PRODUCER_H

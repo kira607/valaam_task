@@ -13,6 +13,14 @@ Consumer::Consumer(std::shared_ptr<FixedQueue<Unit>> _buffer, const std::string 
 
 void Consumer::run()
 {
-    unit = buffer->pop();
-    unit.write(fout);
+    while(true)
+    {
+        unit = buffer->pop();
+        unit.write(fout);
+
+        if(buffer->empty() && buffer->dead())
+        {
+            break;
+        }
+    }
 }
