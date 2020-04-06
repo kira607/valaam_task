@@ -5,16 +5,9 @@
 #ifndef UNTITLED_UNIT_H
 #define UNTITLED_UNIT_H
 
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>  //convert
-#include <cstring>  //strcmp
-#include <functional> //hash
 #include <utility> //move
-
-#include "test_mode.h"
-#include "color.h"
 
 class Unit
 {
@@ -24,7 +17,7 @@ private:
     size_t unit_hash;
 public:
     explicit Unit(int unit_size_in = 0);
-    ~Unit();
+    ~Unit() = default;
 
     void refill();
     void setHash(size_t _hash);

@@ -1,16 +1,13 @@
 #include <iostream>
 #include <string>
 #include <thread>
-#include <vector>
-#include <condition_variable>
 //#include <chrono>
 
 #include "color.h"
-#include "Unit.h"
 #include "Producer.h"
 #include "HashGen.h"
-#include "FixedQueue.h"
 #include "Consumer.h"
+#include "FixedQueue.h"
 
 enum error_code
 {
@@ -24,7 +21,13 @@ enum error_code
 //maximum 4
 int main(int argc, char *argv[])
 {
-    //auto start = std::chrono::high_resolution_clock::now();
+    srand(time(nullptr));
+    std::ofstream f("BIGFILE_4GB");
+    for(unsigned long i = 0; i < 4294967296; ++i)
+    {
+        f << rand()%10;
+    }
+    ///auto start = std::chrono::high_resolution_clock::now();
     int unit_size;
     constexpr int default_unit_size = 1024*1024;
 
@@ -62,33 +65,30 @@ int main(int argc, char *argv[])
     //check files
     if(!std::ifstream(file_in_path).is_open())
     {
-        std::cout << color::red << "Error: could not open " << color::blue << file_in_path << color::red << "\nTerminating\n" << color::none;
+        std::cout << color::red << "Error: could not open " << color::blue <<
+        file_in_path << color::red << "\nTerminating\n" << color::none;
         return FILE_IN_NOT_EXISTS;
     }
     if(!std::ofstream(file_out_path).is_open())
     {
-        std::cout << color::red << "Error: could not open " << color::blue << file_out_path << color::red << "\nTerminating\n" << color::none;
+        std::cout << color::red << "Error: could not open " << color::blue <<
+        file_out_path << color::red << "\nTerminating\n" << color::none;
         return FILE_OUT_NOT_EXISTS;
     }
 
-    //////////////////////////////////////
-    /// HERE WILL BE ARGUMENTS MANAGER ///
-    //////////////////////////////////////
+    ///const unsigned char thread_num = std::thread::hardware_concurrency();
+    ///std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
 
-    ///DO I NEED THIS MESSAGE? PROBABLY NO...
-    if(test_mode)
-    {
-        const unsigned char thread_num = std::thread::hardware_concurrency();
-        std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
-    }
-
+    //buffers for units
     std::shared_ptr<FixedQueue<Unit>> buff1_ptr(new FixedQueue<Unit>);
     std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
 
+    //init classes
     Producer producer(buff1_ptr, file_in_path, unit_size);
     HashGen hashGen(buff1_ptr,buff2_ptr,unit_size);
     Consumer consumer(buff2_ptr,file_out_path,unit_size);
 
+    //launch threads
     std::thread producer_thread(&Producer::run,&producer);
     std::thread hash_gen_thread(&HashGen::run,&hashGen);
     std::thread consumer_thread(&Consumer::run,&consumer);
@@ -96,18 +96,18 @@ int main(int argc, char *argv[])
     hash_gen_thread.join();
     consumer_thread.join();
 
-    /*
-    while(producer.run())
-    {
-        hashGen.run();
-        consumer.run();
-    }
-     */
-
-    //auto end = std::chrono::high_resolution_clock::now();
-    //std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
+    ///auto end = std::chrono::high_resolution_clock::now();
+    ///std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
 
     return SUCCESS;
 }
 
 //while(18446744073709551615UL == -1)
+
+/*
+while(producer.run())
+{
+    hashGen.run();
+    consumer.run();
+}
+ */
