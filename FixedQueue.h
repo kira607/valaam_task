@@ -33,6 +33,12 @@ public:
 };
 
 template<class T>
+FixedQueue<T>::FixedQueue():is_dead{false}
+{
+
+}
+
+template<class T>
 void FixedQueue<T>::push(T _to_push)
 {
     std::unique_lock<std::mutex> ul(mut);
@@ -45,7 +51,18 @@ template<class T>
 T FixedQueue<T>::pop()
 {
     std::unique_lock<std::mutex> ul(mut);
-    cv.wait(ul,[&]{return !this->empty();});
+    cv.wait(ul,[&]
+    {
+        if(!this->dead())
+        {
+            return !this->empty();
+        }
+        return true;
+    });
+    if(this->dead()&&this->empty())
+    {
+        return T{};
+    }
     T tmp = queue.front();
     queue.pop();
     cv.notify_one();
@@ -65,12 +82,6 @@ bool FixedQueue<T>::empty() const
 }
 
 template<class T>
-FixedQueue<T>::FixedQueue():is_dead{false}
-{
-
-}
-
-template<class T>
 bool FixedQueue<T>::dead() const
 {
     return is_dead;
@@ -80,6 +91,7 @@ template<class T>
 void FixedQueue<T>::kill()
 {
     is_dead = true;
+    this->cv.notify_one();
 }
 
 #endif //UNTITLED_FIXEDQUEUE_H

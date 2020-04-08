@@ -7,9 +7,11 @@
 
 #include <memory>
 #include <utility>
+#include <iostream>
 
 #include "Unit.h"
 #include "FixedQueue.h"
+#include "color.h"
 
 class Producer
 {

@@ -44,7 +44,7 @@ void Unit::write(std::ofstream &file)
     }
     else
     {
-        throw std::runtime_error("Error: Unit::write: Could not write chunk in file\n");
+       // throw std::runtime_error("Error: Unit::write: Could not write chunk in file\n");
     }
 }
 
