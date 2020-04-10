@@ -3,4 +3,9 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(untitled main.cpp)
+set(CMAKE_CXX_FLAGS "-pthread")
+
+file(GLOB SOURCE *.cpp)
+file(GLOB HEADERS *.h)
+
+add_executable(untitled ${SOURCE} ${HEADERS})

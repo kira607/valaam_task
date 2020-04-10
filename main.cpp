@@ -1,76 +1,110 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <thread>
+#include <sstream>
+#include <chrono>
 
-bool test_mode = true;
+#include "color.h"
+#include "Producer.h"
+#include "HashGen.h"
+#include "Consumer.h"
+#include "FixedQueue.h"
 
-int main()
+enum error_code
 {
-    std::string file_in_path = "./in.f", file_out_path = "./out.f";
-    /*
-    std::cout << "Name of in file:";
-    std::cin >> file_in_path;
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
-    */
+    SUCCESS = 0,
+    NOT_ENOUGH_ARGUMENTS,
+    FILE_IN_NOT_EXISTS,
+    FILE_OUT_NOT_EXISTS,
+};
 
-    std::ifstream fin(file_in_path,std::ios::binary);
-    std::ofstream fout(file_out_path,std::ios::binary);
+//requires minimum 3 arguments
+//maximum 4
+int main(int argc, char *argv[])
+{
+    int unit_size;
+    constexpr int default_unit_size = 1024 * 1024;
 
-    fin.seekg(0,std::ios::end);
-    int size = fin.tellg();
-    fin.seekg(0,std::ios::beg);
-
-    if(test_mode)
+    //check args
+    if (argc > 4 || argc < 3)
     {
-        std::cout << "size of in file: " << size << " byte" << std::endl;
-    }
-
-    int unit_size{100};
-    char unit[unit_size];
-
-    int j = 1,
-    unit_num = size / unit_size;
-    if(size % unit_size > 0) ++ unit_num;
-
-    while(unit_num > 0)
+        std::cout << color::red << "Got " << argc <<
+                  " arguments, but 3 or 4 needed\nTerminating..." <<
+                  color::none;
+        return NOT_ENOUGH_ARGUMENTS;
+    } else if (argc != 4) // same as argc == 3
     {
-        if(unit_num == 1)
+        std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
+        unit_size = default_unit_size;
+    } else //convert unit size to int
+    {
+        std::stringstream convert(argv[3]);
+        if (!(convert >> unit_size))
         {
-            for(int k = 0; k < unit_size; ++k)
-                unit[k] = '\0';
+            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+            unit_size = default_unit_size;
+        }
+        if (unit_size <= 0)
+        {
+            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+            unit_size = default_unit_size;
         }
 
-        fin.read((char *) unit, sizeof(char) * unit_size);
-
-        // in.f
-        if (test_mode)
-        {
-            std::cout << "----------------in.f " << j << "-----------------" << std::endl;
-            for (int i = 0; i < unit_size; ++i)
-            {
-                std::cout << unit[i];
-            }
-            std::cout << std::endl;
-        }
-
-        //generate hash
-
-        fout.write((char *)unit, sizeof(char) * unit_size);
-        --unit_num;
-        ++j;
     }
 
-    fout.close();
-    fin.close();
+    std::string file_in_path = argv[1], file_out_path = argv[2];
 
-    //cat out.f
-    if(test_mode)
+    //check files
+    if (!std::ifstream(file_in_path).is_open())
     {
-        std::cout << "\n\n\n";
-        std::cout << "----------------out.f-----------------" << std::endl;
-        system("cat out.f");
+        std::cout << color::red << "Error: could not open " << color::blue <<
+                  file_in_path << color::red << "\nTerminating\n" << color::none;
+        return FILE_IN_NOT_EXISTS;
+    }
+    if (!std::ofstream(file_out_path).is_open())
+    {
+        std::cout << color::red << "Error: could not open " << color::blue <<
+                  file_out_path << color::red << "\nTerminating\n" << color::none;
+        return FILE_OUT_NOT_EXISTS;
     }
 
-    return 0;
+    ///const unsigned char thread_num = std::thread::hardware_concurrency();
+    ///std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
+
+    std::cout << "file in: " << file_in_path << "\n";
+    std::cout << "file out: " << file_out_path << "\n";
+    std::cout << "unit size: " << unit_size << "\n";
+
+    //auto start = std::chrono::high_resolution_clock::now();
+    //buffers for units
+    std::shared_ptr<FixedQueue<Unit>> buff1_ptr(new FixedQueue<Unit>);
+    std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
+
+    //init classes
+    Producer producer(buff1_ptr, file_in_path, unit_size);
+    HashGen hashGen(buff1_ptr, buff2_ptr, unit_size);
+    Consumer consumer(buff2_ptr, file_out_path, unit_size);
+
+    //launch threads
+    std::thread producer_thread(&Producer::run, &producer);
+    std::thread hash_gen_thread(&HashGen::run, &hashGen);
+    std::thread consumer_thread(&Consumer::run, &consumer);
+    producer_thread.join();
+    hash_gen_thread.join();
+    consumer_thread.join();
+
+    //auto end = std::chrono::high_resolution_clock::now();
+    //std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
+
+    return SUCCESS;
 }
+
+//while(18446744073709551615UL == -1)
+
+/*
+while(producer.run())
+{
+    hashGen.run();
+    consumer.run();
+}
+ */
