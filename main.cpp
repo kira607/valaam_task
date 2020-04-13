@@ -1,79 +1,63 @@
 #include <iostream>
 #include <string>
 #include <thread>
-#include <sstream>
-#include <chrono>
+//#include <chrono>
 
 #include "color.h"
 #include "Producer.h"
 #include "HashGen.h"
 #include "Consumer.h"
 #include "FixedQueue.h"
-
-enum error_code
-{
-    SUCCESS = 0,
-    NOT_ENOUGH_ARGUMENTS,
-    FILE_IN_NOT_EXISTS,
-    FILE_OUT_NOT_EXISTS,
-};
+#include "error_codes.h"
+#include "ArgumentsManager.h"
 
 //requires minimum 3 arguments
 //maximum 4
 int main(int argc, char *argv[])
 {
-    int unit_size;
-    constexpr int default_unit_size = 1024 * 1024;
+    ArgumentsManager manager(argc, argv);
 
-    //check args
-    if (argc > 4 || argc < 3)
+    try
     {
-        std::cout << color::red << "Got " << argc <<
-                  " arguments, but 3 or 4 needed\nTerminating..." <<
-                  color::none;
-        return NOT_ENOUGH_ARGUMENTS;
-    } else if (argc != 4) // same as argc == 3
+        manager.init();
+    }
+    catch(const error_code& code)
     {
-        std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
-        unit_size = default_unit_size;
-    } else //convert unit size to int
-    {
-        std::stringstream convert(argv[3]);
-        if (!(convert >> unit_size))
+        switch (code)
         {
-            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
-            unit_size = default_unit_size;
+            case SUCCESS:
+                break;
+            case NOT_ENOUGH_ARGUMENTS:
+                std::cout << color::red << "Got " << argc <<
+                          " arguments, but 3 or 4 needed\nTerminating..." <<
+                          color::none;
+                return code;
+            case FILE_IN_NOT_EXISTS:
+                std::cout << color::red << "Error: could not open " << color::blue <<
+                          manager.GetFileIn() << color::red << "\nTerminating\n" << color::none;
+                return code;
+            case FILE_OUT_NOT_EXISTS:
+                std::cout << color::red << "Error: could not open " << color::blue <<
+                          manager.GetFileOut() << color::red << "\nTerminating\n" << color::none;
+                return code;
+            case BAD_UNIT_SIZE:
+                std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+                manager.SetDefaultUnitSize();
+                break;
+            case NOT_RECEIVE_UNIT_SIZE:
+                std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
+                manager.SetDefaultUnitSize();
+                break;
         }
-        if (unit_size <= 0)
-        {
-            std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
-            unit_size = default_unit_size;
-        }
-
     }
-
-    std::string file_in_path = argv[1], file_out_path = argv[2];
-
-    //check files
-    if (!std::ifstream(file_in_path).is_open())
-    {
-        std::cout << color::red << "Error: could not open " << color::blue <<
-                  file_in_path << color::red << "\nTerminating\n" << color::none;
-        return FILE_IN_NOT_EXISTS;
-    }
-    if (!std::ofstream(file_out_path).is_open())
-    {
-        std::cout << color::red << "Error: could not open " << color::blue <<
-                  file_out_path << color::red << "\nTerminating\n" << color::none;
-        return FILE_OUT_NOT_EXISTS;
-    }
-
     ///const unsigned char thread_num = std::thread::hardware_concurrency();
     ///std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
 
-    std::cout << "file in: " << file_in_path << "\n";
-    std::cout << "file out: " << file_out_path << "\n";
-    std::cout << "unit size: " << unit_size << "\n";
+    std::cout << "file in: " << manager.GetFileIn() << "\n";
+    std::cout << "file out: " << manager.GetFileOut() << "\n";
+    std::cout << "unit size: " << manager.GetUnitSize() << " byte " <<
+    "(" << (double)manager.GetUnitSize()/1024 << " KB / " <<
+    (double)manager.GetUnitSize()/1024/1024 << " MB)" << "\n";
 
     //auto start = std::chrono::high_resolution_clock::now();
     //buffers for units
@@ -81,9 +65,9 @@ int main(int argc, char *argv[])
     std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
 
     //init classes
-    Producer producer(buff1_ptr, file_in_path, unit_size);
-    HashGen hashGen(buff1_ptr, buff2_ptr, unit_size);
-    Consumer consumer(buff2_ptr, file_out_path, unit_size);
+    Producer producer(buff1_ptr, manager.GetFileIn(), manager.GetUnitSize());
+    HashGen hashGen(buff1_ptr, buff2_ptr, manager.GetUnitSize());
+    Consumer consumer(buff2_ptr, manager.GetFileOut(), manager.GetUnitSize());
 
     //launch threads
     std::thread producer_thread(&Producer::run, &producer);
