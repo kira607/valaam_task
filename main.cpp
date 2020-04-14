@@ -1,15 +1,10 @@
 #include <iostream>
-#include <string>
-#include <thread>
 //#include <chrono>
 
 #include "color.h"
-#include "Producer.h"
-#include "HashGen.h"
-#include "Consumer.h"
-#include "FixedQueue.h"
 #include "error_codes.h"
 #include "ArgumentsManager.h"
+#include "Application.h"
 
 //requires minimum 3 arguments
 //maximum 4
@@ -59,26 +54,14 @@ int main(int argc, char *argv[])
     "(" << (double)manager.GetUnitSize()/1024 << " KB / " <<
     (double)manager.GetUnitSize()/1024/1024 << " MB)" << "\n";
 
-    //auto start = std::chrono::high_resolution_clock::now();
-    //buffers for units
-    std::shared_ptr<FixedQueue<Unit>> buff1_ptr(new FixedQueue<Unit>);
-    std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
+    Application application(manager.GetFileIn(),manager.GetFileOut(),manager.GetUnitSize());
 
-    //init classes
-    Producer producer(buff1_ptr, manager.GetFileIn(), manager.GetUnitSize());
-    HashGen hashGen(buff1_ptr, buff2_ptr, manager.GetUnitSize());
-    Consumer consumer(buff2_ptr, manager.GetFileOut(), manager.GetUnitSize());
+    auto start = std::chrono::high_resolution_clock::now();
 
-    //launch threads
-    std::thread producer_thread(&Producer::run, &producer);
-    std::thread hash_gen_thread(&HashGen::run, &hashGen);
-    std::thread consumer_thread(&Consumer::run, &consumer);
-    producer_thread.join();
-    hash_gen_thread.join();
-    consumer_thread.join();
+    application.run();
 
-    //auto end = std::chrono::high_resolution_clock::now();
-    //std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
 
     return SUCCESS;
 }

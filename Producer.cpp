@@ -5,7 +5,6 @@
 #include <thread>
 #include "Producer.h"
 
-
 Producer::Producer(std::shared_ptr<FixedQueue<Unit>> _buffer,
                    const std::string& _name_of_file,
                    int _unit_size)
@@ -16,19 +15,12 @@ Producer::Producer(std::shared_ptr<FixedQueue<Unit>> _buffer,
 
 void Producer::run()
 {
-    try
+    unit.refill();
+    unit.read(fin);
+    do
     {
+        buffer->push(unit);
         unit.refill();
-        unit.read(fin);
-        do
-        {
-            buffer->push(unit);
-            unit.refill();
-        } while (unit.read(fin));
-        buffer->kill();
-    }
-    catch(std::exception &ex)
-    {
-        std::cout << color::red << ex.what() << color::none;
-    }
+    } while (unit.read(fin));
+    buffer->kill();
 }

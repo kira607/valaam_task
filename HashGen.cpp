@@ -13,27 +13,21 @@ HashGen::HashGen(std::shared_ptr<FixedQueue<Unit>> _buff1, std::shared_ptr<Fixed
 
 void HashGen::run()
 {
-    try
+    while (true)
     {
-        while (true)
+        if (buff1->empty() && buff1->dead())
         {
-            if (buff1->empty() && buff1->dead())
-            {
-                buff2->kill();
-                break;
-            }
-            else
-            {
-                unit = buff1->pop();
-                unit.setHash(gen_hash(unit));
-                buff2->push(unit);
-            }
+            buff2->kill();
+            break;
+        }
+        else
+        {
+            unit = buff1->pop();
+            unit.setHash(gen_hash(unit));
+            buff2->push(unit);
         }
     }
-    catch(std::exception &ex)
-    {
-        std::cout << color::red << ex.what() << color::none;
-    }
+
 }
 
 size_t HashGen::gen_hash(Unit &_unit)
