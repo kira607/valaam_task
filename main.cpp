@@ -1,10 +1,9 @@
 #include <iostream>
-//#include <chrono>
 
 #include "color.h"
 #include "error_codes.h"
-#include "ArgumentsManager.h"
-#include "Application.h"
+#include "arguments_manager.h"
+#include "application.h"
 
 //requires minimum 3 arguments
 //maximum 4
@@ -14,64 +13,61 @@ int main(int argc, char *argv[])
 
     try
     {
-        manager.init();
+        manager.Init();
     }
-    catch(const error_code& code)
+    catch(const ErrorCodes& code)
     {
         switch (code)
         {
             case SUCCESS:
                 break;
             case NOT_ENOUGH_ARGUMENTS:
-                std::cout << color::red << "Got " << argc <<
+                std::cout << Color::red << "Got " << argc <<
                           " arguments, but 3 or 4 needed\nTerminating..." <<
-                          color::none;
+                          Color::none;
                 return code;
             case FILE_IN_NOT_EXISTS:
-                std::cout << color::red << "Error: could not open " << color::blue <<
-                          manager.GetFileIn() << color::red << "\nTerminating\n" << color::none;
+                std::cout << Color::red << "Error: could not open " << Color::blue <<
+                          manager.GetFileIn() << Color::red << "\nTerminating\n" << Color::none;
                 return code;
             case FILE_OUT_NOT_EXISTS:
-                std::cout << color::red << "Error: could not open " << color::blue <<
-                          manager.GetFileOut() << color::red << "\nTerminating\n" << color::none;
+                std::cout << Color::red << "Error: could not open " << Color::blue <<
+                          manager.GetFileOut() << Color::red << "\nTerminating\n" << Color::none;
                 return code;
             case BAD_UNIT_SIZE:
-                std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+                std::cout << Color::red << "Bad unit_ size. Setting default... (1MB)" << Color::none << '\n';
                 manager.SetDefaultUnitSize();
                 break;
-            case NOT_RECEIVE_UNIT_SIZE:
-                std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
+            case DID_NOT_RECEIVE_UNIT_SIZE:
+                std::cout << Color::blue << "Did not receive unit_ size. Setting default... (1MB)" << Color::none << '\n';
                 manager.SetDefaultUnitSize();
                 break;
         }
     }
-    ///const unsigned char thread_num = std::thread::hardware_concurrency();
-    ///std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
 
+    //output parameters information
     std::cout << "file in: " << manager.GetFileIn() << "\n";
     std::cout << "file out: " << manager.GetFileOut() << "\n";
-    std::cout << "unit size: " << manager.GetUnitSize() << " byte " <<
+    std::cout << "unit_ size: " << manager.GetUnitSize() << " byte " <<
     "(" << (double)manager.GetUnitSize()/1024 << " KB / " <<
     (double)manager.GetUnitSize()/1024/1024 << " MB)" << "\n";
 
     Application application(manager.GetFileIn(),manager.GetFileOut(),manager.GetUnitSize());
-
-    auto start = std::chrono::high_resolution_clock::now();
-
-    application.run();
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
-
+    application.Run();
     return SUCCESS;
 }
 
-//while(18446744073709551615UL == -1)
+/// NOTES
 
-/*
-while(producer.run())
-{
-    hashGen.run();
-    consumer.run();
-}
- */
+/// How to know number of threads on computer
+//const unsigned char thread_num = std::thread::hardware_concurrency();
+//std::cout << "This computer has " << Color::blue << (short) thread_num << Color::none << " threads\n";
+
+/// 18446744073709551615UL == -1 is true condition
+//while(18446744073709551615UL == -1) //true
+
+///How to detect Run time
+//auto start = std::chrono::high_resolution_clock::now();
+//something to detect
+//auto end = std::chrono::high_resolution_clock::now();
+//std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";

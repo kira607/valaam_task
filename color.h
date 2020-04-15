@@ -2,18 +2,18 @@
 // Created by kirill on 20.03.2020.
 //
 
-#ifndef UNTITLED_COLOR_H
-#define UNTITLED_COLOR_H
+#ifndef SIGNATURE_COLOR_H
+#define SIGNATURE_COLOR_H
 
 #include <ostream>
 
-enum class color
+enum class Color
 {
     red,
     blue,
     none,
 };
 
-std::ostream& operator<< (std::ostream &out, color col);
+std::ostream& operator<< (std::ostream &out, Color color);
 
-#endif //UNTITLED_COLOR_H
+#endif //SIGNATURE_COLOR_H
