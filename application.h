@@ -15,7 +15,22 @@
 class Application
 {
 public:
+    ///
+    /// @brief Constructs application.
+    ///
+    /// @param[in] file_in name of file from which to read.
+    /// @param[in] file_out name of file where to write.
+    /// @param[in] unit_size size of unit in bytes.
+    ///
+    /// @return Constructed application object.
+    ///
     Application(const std::string& file_in, const std::string& file_out, int unit_size);
+
+    ///
+    /// @brief Runs application.
+    ///
+    /// @note Launches three threads.
+    ///
     void Run();
 private:
     //buffers for units

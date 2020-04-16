@@ -14,15 +14,58 @@ template <class T>
 class FixedQueue
 {
 public:
+    ///
+    /// @brief Costructs fixed queue
+    ///
+    /// @return Constructed fixed queue object
+    ///
     FixedQueue();
     ~FixedQueue() = default;
 
+    ///
+    /// @breif Pushes element in queue
+    ///
+    /// @param[in] _to_push element to push
+    ///
+    /// @note Works only when queue is not full. Else waits till last element will be poped.
+    ///
     void Push(T _to_push);
+
+    ///
+    /// @breif Pops element from queue
+    ///
+    /// @return front element from queue
+    ///
+    /// @note Works only when queue is not empty. Else waits till element will be pushed or buffer will be killed.
+    ///
     T Pop();
 
+    ///
+    /// @breif Check if queue is full
+    ///
+    /// @return true if queue is full, otherwise false
+    ///
     [[nodiscard]] bool Full() const;
+
+    ///
+    /// @breif Check if queue is empty
+    ///
+    /// @return true if queue is empty, otherwise false
+    ///
     [[nodiscard]] bool Empty() const;
+
+    ///
+    /// @breif Check if queue is dead
+    ///
+    /// @return true if queue is dead, otherwise false
+    ///
     [[nodiscard]] bool Dead() const;
+
+    ///
+    /// @breif Kills queue
+    ///
+    /// @note Sets dead_ true and notifies condition variable
+    ///
     void Kill();
 private:
     static constexpr int kFixedSize = 10;

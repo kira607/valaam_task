@@ -14,11 +14,50 @@
 class ArgumentsManager
 {
 public:
-    ArgumentsManager(int argc, char*argv[]);
+    ///
+    /// @brief Constructs arguments manager.
+    ///
+    /// @param[in] argc number of parameters.
+    /// @param[in] argv values of parameters.
+    ///
+    /// @return Constructed arguments manager object.
+    ///
+    ArgumentsManager(int argc, char* argv[]);
+
+    ///
+    /// @brief Initializes application.
+    ///
+    /// @note Sets fields of arguments manager.
+    ///       if not enough arguments or has bad arguments
+    ///       throws exception with error code
+    ///       \see ErrorCodes for more details
+    ///
     void Init();
+
+    ///
+    /// @brief Sets default unit size
+    ///
     void SetDefaultUnitSize();
+
+    ///
+    /// @brief Returns name of in file.
+    ///
+    /// @return Name of in file.
+    ///
     [[nodiscard]] std::string GetFileIn() const;
+
+    ///
+    /// @brief Returns name of out file.
+    ///
+    /// @return Name of out file.
+    ///
     [[nodiscard]] std::string GetFileOut() const;
+
+    ///
+    /// @brief Returns unit size in bytes.
+    ///
+    /// @return Unit size.
+    ///
     [[nodiscard]] int GetUnitSize() const;
 private:
     int argc_;

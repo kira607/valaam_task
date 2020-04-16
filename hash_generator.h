@@ -15,9 +15,29 @@
 class HashGenerator
 {
 public:
+    ///
+    /// @brief Constructs gash generator object.
+    ///
+    /// @param[in] buffer1 Pointer on buffer connected with Producer.
+    /// @param[in] buffer2 Pointer on buffer connected with Consumer.
+    /// @param[in] unit_size Size of unit in bytes.
+    ///
+    /// @return Constructed hash generator object
+    ///
     HashGenerator(std::shared_ptr<FixedQueue<Unit>> buffer1, std::shared_ptr<FixedQueue<Unit>> buffer2, int unit_size);
+
+    ///
+    /// @brief Runs hash generator
+    ///
     void Run();
 private:
+    ///
+    /// @brief Generates hash for unit
+    ///
+    /// @param unit Unit to which will be generated hash
+    ///
+    /// @return Generated hash
+    ///
     size_t GenerateHash(Unit& unit);
     std::shared_ptr<FixedQueue<Unit>> buffer1_;
     std::shared_ptr<FixedQueue<Unit>> buffer2_;

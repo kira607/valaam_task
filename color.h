@@ -14,6 +14,17 @@ enum class Color
     none,
 };
 
+///
+/// @brief Insertion operator
+///
+/// @param[in] out Ostream object
+/// @param[in] color Color to set
+///
+/// @note Outputs control character that sets color of text in terminal.
+/// @warning If you don't reset color, all text that goes further in terminal will be colored with last set color
+///
+/// @return object ostream with color.
+///
 std::ostream& operator<< (std::ostream &out, Color color);
 
 #endif //SIGNATURE_COLOR_H
