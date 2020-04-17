@@ -5,7 +5,9 @@
 #include "hash_generator.h"
 
 HashGenerator::HashGenerator(std::shared_ptr<FixedQueue<Unit>> buffer1, std::shared_ptr<FixedQueue<Unit>> buffer2, int unit_size)
-: buffer1_{std::move(buffer1)}, buffer2_{std::move(buffer2)}, unit_(unit_size)
+: buffer1_{std::move(buffer1)},
+  buffer2_{std::move(buffer2)},
+  unit_{unit_size}
 {
 
 }
@@ -32,7 +34,11 @@ void HashGenerator::Run()
 size_t HashGenerator::GenerateHash(Unit &unit)
 {
     if(!unit.Data().empty())
+    {
         return hash_generator_(unit.Data());
+    }
     else
+    {
         return 0;
+    }
 }

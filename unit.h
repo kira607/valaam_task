@@ -51,7 +51,7 @@ public:
     size_t Read(std::ifstream &file);
 
     ///
-    /// @breif Writes unit and hash in file
+    /// @breif Writes unit and its hash in file
     ///
     /// @param file File stream in which to write
     ///

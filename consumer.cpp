@@ -6,8 +6,8 @@
 
 Consumer::Consumer(std::shared_ptr<FixedQueue<Unit>> buffer, const std::string &name_of_out_file, int unit_size)
 : buffer_{std::move(buffer)},
-  file_out_(name_of_out_file, std::ios_base::binary | std::ios_base::trunc),
-  unit_(unit_size)
+  file_out_{name_of_out_file, std::ios_base::binary | std::ios_base::trunc},
+  unit_{unit_size}
 {
 
 }

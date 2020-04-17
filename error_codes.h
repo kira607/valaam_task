@@ -7,12 +7,12 @@
 
 enum ErrorCodes
 {
-    SUCCESS = 0,
-    BAD_UNIT_SIZE,
-    DID_NOT_RECEIVE_UNIT_SIZE,
-    NOT_ENOUGH_ARGUMENTS,
-    FILE_IN_NOT_EXISTS,
-    FILE_OUT_NOT_EXISTS,
+    kSuccess = 0,
+    kBadUnitSize,
+    kDidNotReceiveUnitSize,
+    kNotEnoughArguments,
+    kFileInNotExists,
+    kFileOutNotExists,
 };
 
 #endif //SIGNATURE_ERROR_CODES_H

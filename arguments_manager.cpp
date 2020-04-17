@@ -5,7 +5,7 @@
 #include "arguments_manager.h"
 
 ArgumentsManager::ArgumentsManager(int argc, char *argv[])
-:unit_size_{0}
+:unit_size_{kDefaultUnitSize}
 {
     argc_ = argc;
     argv_ = argv;
@@ -15,7 +15,7 @@ void ArgumentsManager::Init()
 {
     if(argc_ > 4 || argc_ < 3)
     {
-        throw ErrorCodes::NOT_ENOUGH_ARGUMENTS;
+        throw ErrorCodes::kNotEnoughArguments;
     }
 
     file_in_name_  = argv_[1];
@@ -23,27 +23,27 @@ void ArgumentsManager::Init()
 
     if(!std::ifstream(file_in_name_).is_open())
     {
-        throw ErrorCodes::FILE_IN_NOT_EXISTS;
+        throw ErrorCodes::kFileInNotExists;
     }
     if(!std::ofstream(file_out_name_).is_open())
     {
-        throw ErrorCodes::FILE_OUT_NOT_EXISTS;
+        throw ErrorCodes::kFileOutNotExists;
     }
     if(argc_ == 3)
     {
-        throw ErrorCodes::DID_NOT_RECEIVE_UNIT_SIZE;
+        throw ErrorCodes::kDidNotReceiveUnitSize;
     }
     else
     {
         std::stringstream convert(argv_[3]);
         if (!(convert >> unit_size_))
         {
-            throw ErrorCodes::BAD_UNIT_SIZE;
+            throw ErrorCodes::kBadUnitSize;
 
         }
         if (unit_size_ <= 0)
         {
-            throw ErrorCodes::BAD_UNIT_SIZE;
+            throw ErrorCodes::kBadUnitSize;
         }
     }
 }

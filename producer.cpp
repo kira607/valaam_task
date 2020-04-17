@@ -9,8 +9,8 @@ Producer::Producer(std::shared_ptr<FixedQueue<Unit>> buffer,
                    const std::string& name_of_in_file,
                    int unit_size)
 : buffer_{std::move(buffer)},
-  fin_(name_of_in_file, std::ios_base::binary | std::ios_base::in),
-  unit_(unit_size)
+  fin_{name_of_in_file, std::ios_base::binary | std::ios_base::in},
+  unit_{unit_size}
 {
 
 }

@@ -21,8 +21,6 @@ public:
     /// @param[in] name_of_out_file name of file where to write.
     /// @param[in] unit_size size of unit in bytes.
     ///
-    /// @return Constructed consumer object.
-    ///
     explicit Consumer(std::shared_ptr<FixedQueue<Unit>> buffer, const std::string &name_of_out_file, int unit_size);
 
     ///

@@ -22,8 +22,6 @@ public:
     /// @param[in] buffer2 Pointer on buffer connected with Consumer.
     /// @param[in] unit_size Size of unit in bytes.
     ///
-    /// @return Constructed hash generator object
-    ///
     HashGenerator(std::shared_ptr<FixedQueue<Unit>> buffer1, std::shared_ptr<FixedQueue<Unit>> buffer2, int unit_size);
 
     ///

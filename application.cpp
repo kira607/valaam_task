@@ -5,9 +5,9 @@
 #include "application.h"
 
 Application::Application(const std::string& file_in, const std::string& file_out, int unit_size)
-: producer_(buffer1_ptr_, file_in, unit_size),
-  hash_gen_(buffer1_ptr_, buffer2_ptr_, unit_size),
-  consumer_(buffer2_ptr_, file_out, unit_size)
+: producer_{buffer1_ptr_, file_in, unit_size},
+  hash_gen_{buffer1_ptr_, buffer2_ptr_, unit_size},
+  consumer_{buffer2_ptr_, file_out, unit_size}
 {
 
 }

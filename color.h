@@ -9,9 +9,9 @@
 
 enum class Color
 {
-    red,
-    blue,
-    none,
+    kRed,
+    kBlue,
+    kNone,
 };
 
 ///
@@ -25,6 +25,6 @@ enum class Color
 ///
 /// @return object ostream with color.
 ///
-std::ostream& operator<< (std::ostream &out, Color color);
+std::ostream& operator<< (std::ostream& out, Color color);
 
 #endif //SIGNATURE_COLOR_H

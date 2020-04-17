@@ -19,28 +19,27 @@ int main(int argc, char *argv[])
     {
         switch (code)
         {
-            case SUCCESS:
+            case kSuccess:
                 break;
-            case NOT_ENOUGH_ARGUMENTS:
-                std::cout << Color::red << "Got " << argc <<
+            case kNotEnoughArguments:
+                std::cout << Color::kRed << "Got " << argc <<
                           " arguments, but 3 or 4 needed\nTerminating..." <<
-                          Color::none;
+                          Color::kNone;
                 return code;
-            case FILE_IN_NOT_EXISTS:
-                std::cout << Color::red << "Error: could not open " << Color::blue <<
-                          manager.GetFileIn() << Color::red << "\nTerminating\n" << Color::none;
+            case kFileInNotExists:
+                std::cout << Color::kRed << "Error: could not open " << Color::kBlue <<
+                          manager.GetFileIn() << Color::kRed << "\nTerminating\n" << Color::kNone;
                 return code;
-            case FILE_OUT_NOT_EXISTS:
-                std::cout << Color::red << "Error: could not open " << Color::blue <<
-                          manager.GetFileOut() << Color::red << "\nTerminating\n" << Color::none;
+            case kFileOutNotExists:
+                std::cout << Color::kRed << "Error: could not open " << Color::kBlue <<
+                          manager.GetFileOut() << Color::kRed << "\nTerminating\n" << Color::kNone;
                 return code;
-            case BAD_UNIT_SIZE:
-                std::cout << Color::red << "Bad unit_ size. Setting default... (1MB)" << Color::none << '\n';
+            case kBadUnitSize:
+                std::cout << Color::kRed << "Bad unit_ size. Setting default... (1MB)" << Color::kNone << '\n';
                 manager.SetDefaultUnitSize();
                 break;
-            case DID_NOT_RECEIVE_UNIT_SIZE:
-                std::cout << Color::blue << "Did not receive unit_ size. Setting default... (1MB)" << Color::none << '\n';
-                manager.SetDefaultUnitSize();
+            case kDidNotReceiveUnitSize:
+                std::cout << Color::kBlue << "Did not receive unit_ size. Set default... (1MB)" << Color::kNone << '\n';
                 break;
         }
     }
@@ -54,7 +53,7 @@ int main(int argc, char *argv[])
 
     Application application(manager.GetFileIn(),manager.GetFileOut(),manager.GetUnitSize());
     application.Run();
-    return SUCCESS;
+    return kSuccess;
 }
 
 /// NOTES

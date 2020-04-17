@@ -17,19 +17,17 @@ public:
     ///
     /// @brief Costructs fixed queue
     ///
-    /// @return Constructed fixed queue object
-    ///
     FixedQueue();
     ~FixedQueue() = default;
 
     ///
     /// @breif Pushes element in queue
     ///
-    /// @param[in] _to_push element to push
+    /// @param[in] to_push element to push
     ///
     /// @note Works only when queue is not full. Else waits till last element will be poped.
     ///
-    void Push(T _to_push);
+    void Push(T to_push);
 
     ///
     /// @breif Pops element from queue
@@ -134,6 +132,7 @@ bool FixedQueue<T>::Dead() const
 template<class T>
 void FixedQueue<T>::Kill()
 {
+    std::unique_lock<std::mutex> ul(mut_);
     dead_ = true;
     this->cv_.notify_one();
 }
