@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
     std::cout << "unit_ size: " << manager.GetUnitSize() << " byte " <<
     "(" << (double)manager.GetUnitSize()/1024 << " KB / " <<
     (double)manager.GetUnitSize()/1024/1024 << " MB)" << "\n";
+    std::cout << "Process is running...\n";
 
     Application application(manager.GetFileIn(),manager.GetFileOut(),manager.GetUnitSize());
     application.Run();
