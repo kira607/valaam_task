@@ -1,11 +1,16 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(signature)
 
 set(CMAKE_CXX_STANDARD 20)
-
 set(CMAKE_CXX_FLAGS "-pthread")
 
-file(GLOB SOURCE *.cpp)
-file(GLOB HEADERS *.h)
+include_directories(src)
 
-add_executable(signature ${SOURCE} ${HEADERS})
+add_subdirectory(src)
+add_subdirectory(tst)
+add_subdirectory(lib/googletest)
+
+#add_executable(signature ${SOURCE} ${HEADERS})
+
+
+

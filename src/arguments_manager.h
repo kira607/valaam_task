@@ -35,7 +35,7 @@ public:
     /// @note Sets fields of arguments manager.
     ///       if not enough arguments or has bad arguments
     ///       throws exception with error code
-    ///       \see ErrorCodes for more details
+    ///       \see @see error_codes.h for more details
     ///
     void Init();
 
@@ -70,7 +70,7 @@ private:
     std::string file_in_name_;
     std::string file_out_name_;
     int unit_size_;
-    static constexpr int kDefaultUnitSize = 1_Mb; // == 1024*1024 == 1 MB
+    static constexpr int kDefaultUnitSize = 1_Mb;
 };
 
 
