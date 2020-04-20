@@ -9,3 +9,9 @@ file(GLOB SOURCE *.cpp)
 file(GLOB HEADERS *.h)
 
 add_executable(signature ${SOURCE} ${HEADERS})
+# This must be set in the root directory for the tests to be run by
+# 'make test' or ctest.
+enable_testing()
+find_package(GMock REQUIRED)
+
+add_subdirectory(test)
