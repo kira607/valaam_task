@@ -2,29 +2,20 @@
 // Created by kirill on 13.04.2020.
 //
 
-#include "ArgumentsManager.h"
-
-//struct exception : std::exception
-//{
-//    error_code code_;
-//    explicit exception(error_code code)
-//    {
-//        code_ = code;
-//    }
-//};
+#include "arguments_manager.h"
 
 ArgumentsManager::ArgumentsManager(int argc, char *argv[])
-:unit_size_{0}
+:unit_size_{kDefaultUnitSize}
 {
     argc_ = argc;
     argv_ = argv;
 }
 
-void ArgumentsManager::init()
+void ArgumentsManager::Init()
 {
     if(argc_ > 4 || argc_ < 3)
     {
-        throw error_code::NOT_ENOUGH_ARGUMENTS;
+        throw ErrorCodes::kNotEnoughArguments;
     }
 
     file_in_name_  = argv_[1];
@@ -32,27 +23,27 @@ void ArgumentsManager::init()
 
     if(!std::ifstream(file_in_name_).is_open())
     {
-        throw error_code::FILE_IN_NOT_EXISTS;
+        throw ErrorCodes::kFileInNotExists;
     }
     if(!std::ofstream(file_out_name_).is_open())
     {
-        throw error_code::FILE_OUT_NOT_EXISTS;
+        throw ErrorCodes::kFileOutNotExists;
     }
     if(argc_ == 3)
     {
-        throw error_code::NOT_RECEIVE_UNIT_SIZE;
+        throw ErrorCodes::kDidNotReceiveUnitSize;
     }
     else
     {
         std::stringstream convert(argv_[3]);
         if (!(convert >> unit_size_))
         {
-            throw error_code::BAD_UNIT_SIZE;
+            throw ErrorCodes::kBadUnitSize;
 
         }
         if (unit_size_ <= 0)
         {
-            throw error_code::BAD_UNIT_SIZE;
+            throw ErrorCodes::kBadUnitSize;
         }
     }
 }
@@ -74,9 +65,18 @@ int ArgumentsManager::GetUnitSize() const
 
 void ArgumentsManager::SetDefaultUnitSize()
 {
-    unit_size_ = default_unit_size_;
+    unit_size_ = kDefaultUnitSize;
 }
 
+/// Note: It is possible to use struct like below to avoid warnings
+//struct ExceptionCode : std::exception
+//{
+//    ErrorCodes code;
+//    explicit ExceptionCode(ErrorCodes code)
+//    {
+//        code = code;
+//    }
+//};
 
 
 

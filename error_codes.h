@@ -2,17 +2,17 @@
 // Created by kirill on 13.04.2020.
 //
 
-#ifndef UNTITLED_ERROR_CODES_H
-#define UNTITLED_ERROR_CODES_H
+#ifndef SIGNATURE_ERROR_CODES_H
+#define SIGNATURE_ERROR_CODES_H
 
-enum error_code
+enum ErrorCodes
 {
-    SUCCESS = 0,
-    BAD_UNIT_SIZE,
-    NOT_RECEIVE_UNIT_SIZE,
-    NOT_ENOUGH_ARGUMENTS,
-    FILE_IN_NOT_EXISTS,
-    FILE_OUT_NOT_EXISTS,
+    kSuccess = 0,
+    kBadUnitSize,
+    kDidNotReceiveUnitSize,
+    kNotEnoughArguments,
+    kFileInNotExists,
+    kFileOutNotExists,
 };
 
-#endif //UNTITLED_ERROR_CODES_H
+#endif //SIGNATURE_ERROR_CODES_H

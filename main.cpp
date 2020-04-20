@@ -1,15 +1,9 @@
 #include <iostream>
-#include <string>
-#include <thread>
-//#include <chrono>
 
 #include "color.h"
-#include "Producer.h"
-#include "HashGen.h"
-#include "Consumer.h"
-#include "FixedQueue.h"
 #include "error_codes.h"
-#include "ArgumentsManager.h"
+#include "arguments_manager.h"
+#include "application.h"
 
 //requires minimum 3 arguments
 //maximum 4
@@ -19,76 +13,61 @@ int main(int argc, char *argv[])
 
     try
     {
-        manager.init();
+        manager.Init();
     }
-    catch(const error_code& code)
+    catch(const ErrorCodes& code)
     {
         switch (code)
         {
-            case SUCCESS:
+            case kSuccess:
                 break;
-            case NOT_ENOUGH_ARGUMENTS:
-                std::cout << color::red << "Got " << argc <<
+            case kNotEnoughArguments:
+                std::cout << Color::kRed << "Got " << argc <<
                           " arguments, but 3 or 4 needed\nTerminating..." <<
-                          color::none;
+                          Color::kNone;
                 return code;
-            case FILE_IN_NOT_EXISTS:
-                std::cout << color::red << "Error: could not open " << color::blue <<
-                          manager.GetFileIn() << color::red << "\nTerminating\n" << color::none;
+            case kFileInNotExists:
+                std::cout << Color::kRed << "Error: could not open " << Color::kBlue <<
+                          manager.GetFileIn() << Color::kRed << "\nTerminating\n" << Color::kNone;
                 return code;
-            case FILE_OUT_NOT_EXISTS:
-                std::cout << color::red << "Error: could not open " << color::blue <<
-                          manager.GetFileOut() << color::red << "\nTerminating\n" << color::none;
+            case kFileOutNotExists:
+                std::cout << Color::kRed << "Error: could not open " << Color::kBlue <<
+                          manager.GetFileOut() << Color::kRed << "\nTerminating\n" << Color::kNone;
                 return code;
-            case BAD_UNIT_SIZE:
-                std::cout << color::red << "Bad unit size. Setting default... (1MB)" << color::none << '\n';
+            case kBadUnitSize:
+                std::cout << Color::kRed << "Bad unit_ size. Setting default... (1MB)" << Color::kNone << '\n';
                 manager.SetDefaultUnitSize();
                 break;
-            case NOT_RECEIVE_UNIT_SIZE:
-                std::cout << color::blue << "Did not receive unit size. Setting default... (1MB)" << color::none << '\n';
-                manager.SetDefaultUnitSize();
+            case kDidNotReceiveUnitSize:
+                std::cout << Color::kBlue << "Did not receive unit_ size. Set default... (1MB)" << Color::kNone << '\n';
                 break;
         }
     }
-    ///const unsigned char thread_num = std::thread::hardware_concurrency();
-    ///std::cout << "This computer has " << color::blue << (short) thread_num << color::none << " threads\n";
 
+    //output parameters information
     std::cout << "file in: " << manager.GetFileIn() << "\n";
     std::cout << "file out: " << manager.GetFileOut() << "\n";
-    std::cout << "unit size: " << manager.GetUnitSize() << " byte " <<
+    std::cout << "unit_ size: " << manager.GetUnitSize() << " byte " <<
     "(" << (double)manager.GetUnitSize()/1024 << " KB / " <<
     (double)manager.GetUnitSize()/1024/1024 << " MB)" << "\n";
+    std::cout << "Process is running...\n";
 
-    //auto start = std::chrono::high_resolution_clock::now();
-    //buffers for units
-    std::shared_ptr<FixedQueue<Unit>> buff1_ptr(new FixedQueue<Unit>);
-    std::shared_ptr<FixedQueue<Unit>> buff2_ptr(new FixedQueue<Unit>);
-
-    //init classes
-    Producer producer(buff1_ptr, manager.GetFileIn(), manager.GetUnitSize());
-    HashGen hashGen(buff1_ptr, buff2_ptr, manager.GetUnitSize());
-    Consumer consumer(buff2_ptr, manager.GetFileOut(), manager.GetUnitSize());
-
-    //launch threads
-    std::thread producer_thread(&Producer::run, &producer);
-    std::thread hash_gen_thread(&HashGen::run, &hashGen);
-    std::thread consumer_thread(&Consumer::run, &consumer);
-    producer_thread.join();
-    hash_gen_thread.join();
-    consumer_thread.join();
-
-    //auto end = std::chrono::high_resolution_clock::now();
-    //std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";
-
-    return SUCCESS;
+    Application application(manager.GetFileIn(),manager.GetFileOut(),manager.GetUnitSize());
+    application.Run();
+    return kSuccess;
 }
 
-//while(18446744073709551615UL == -1)
+/// NOTES
 
-/*
-while(producer.run())
-{
-    hashGen.run();
-    consumer.run();
-}
- */
+/// How to know number of threads on computer
+//const unsigned char thread_num = std::thread::hardware_concurrency();
+//std::cout << "This computer has " << Color::blue << (short) thread_num << Color::none << " threads\n";
+
+/// 18446744073709551615UL == -1 is true condition
+//while(18446744073709551615UL == -1) //true
+
+///How to detect Run time
+//auto start = std::chrono::high_resolution_clock::now();
+//something to detect
+//auto end = std::chrono::high_resolution_clock::now();
+//std::cout << "Proccess took " << (end-start).count() << " nanoseconds\n";

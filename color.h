@@ -2,18 +2,29 @@
 // Created by kirill on 20.03.2020.
 //
 
-#ifndef UNTITLED_COLOR_H
-#define UNTITLED_COLOR_H
+#ifndef SIGNATURE_COLOR_H
+#define SIGNATURE_COLOR_H
 
 #include <ostream>
 
-enum class color
+enum class Color
 {
-    red,
-    blue,
-    none,
+    kRed,
+    kBlue,
+    kNone,
 };
 
-std::ostream& operator<< (std::ostream &out, color col);
+///
+/// @brief Insertion operator
+///
+/// @param[in] out Ostream object
+/// @param[in] color Color to set
+///
+/// @note Outputs control character that sets color of text in terminal.
+/// @warning If you don't reset color, all text that goes further in terminal will be colored with last set color
+///
+/// @return object ostream with color.
+///
+std::ostream& operator<< (std::ostream& out, Color color);
 
-#endif //UNTITLED_COLOR_H
+#endif //SIGNATURE_COLOR_H
