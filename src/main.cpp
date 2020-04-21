@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
                           manager.GetFileOut() << Color::kRed << "\nTerminating\n" << Color::kNone;
                 return code;
             case kBadUnitSize:
-                std::cout << Color::kRed << "Bad unit_ size. Setting default... (1MB)" << Color::kNone << '\n';
+                std::cout << Color::kRed << "Bad unit size. Setting default... (1MB)" << Color::kNone << '\n';
                 manager.SetDefaultUnitSize();
                 break;
             case kDidNotReceiveUnitSize:
