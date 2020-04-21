@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(application,test1)
+TEST(application,test)
 {
     EXPECT_EQ(1,1);
 }
