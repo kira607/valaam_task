@@ -6,7 +6,10 @@
 
 Unit::Unit(int unit_size): unit_size_{unit_size}, hash_{0}
 {
+    if(unit_size >= 0)
+    {
     unit_.resize(unit_size, 0);
+    }
 }
 
 void Unit::Refill()
@@ -42,10 +45,6 @@ void Unit::Write(std::ofstream &file)
         file.write((char *) &unit_[0], sizeof(char) * unit_size_);
         if(hash_)
             file << hash_;
-    }
-    else
-    {
-       // throw std::runtime_error("Error: Unit::write: Could not Write chunk in file\n");
     }
 }
 
